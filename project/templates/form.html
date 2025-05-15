@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} attendance form {% endblock %}
+{% block content %}
+<div class="d-flex justify-content-center rounded ">
+    <div class="border p-3 m-5 bg-gray col-lg-6 col-12 rounded">
+        <form action="{% url 'scan' %}" method="Post">
+            {% csrf_token %}
+        <label for="name">Name</label>
+        <input type="text"  class="p-1 rounded d-block w-100" name="name" placeholder="enter your name">
+        <button class="btn btn-dark mt-2 text-light w-100">update attendance</button>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

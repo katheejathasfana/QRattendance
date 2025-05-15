@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} login {% endblock %}
+{% block style %}
+     
+{% endblock %}
+{% block content %}
+    <div class="container min-vh-100 d-flex justify-content-center align-items-center">
+    <div class="col-12 col-md-12 col-lg-6 p-3 border border-1 bg-light rounded">
+
+        <form action="{% url 'login' %}" method='POST'>
+            {% csrf_token %}
+        <h2>login</h2>
+        <div class='p-2'>
+        <label for="username">Username</label>
+        <input type="text"name='username' class='w-100 p-1 border-none'>
+        </div>
+        <div class='p-2'>
+        <label for="password">Password</label>
+        <input type="password" name="password" class='w-100 p-1'>
+        </div>
+        <button type='submit' class='btn btn-block w-100 text-light mt-3' style='background-color:black;'>login</button>
+        </form>
+    </div>
+    </div>
+
+    
+{% endblock %}

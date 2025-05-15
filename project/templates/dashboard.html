@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}attendance list {% endblock %}
+
+
+{% block content %}
+
+<div class="d-flex justify-content-center mt-3">
+    <table class="w-75 table table-bordered">
+        <thead>
+            <tr>
+            <th>Date</th>
+            <th>Name</th>
+            <th>Entry time</th>
+            <th>Exit time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in attendances %}
+            <tr><td>{{i.date}}</td>
+            <td>{{i.student.name}}</td>
+            <td>{{i.entry_time}}</td>
+            <td>{{i.exit_time}}</td></tr>
+            {% endfor  %}
+            
+        </tbody>
+    </table>
+   </div> 
+
+<!--modal-->
+
+<div class="modal fade" id="student_form" tabindex="-1" aria-labelledby="studentmodal" aria-hidden="true" >
+    <div class="modal-dialog">
+
+        <div  class="modal-content">
+            <div class="modal-header">
+                <h5>Create Student</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex justify-content-center">
+                <form action="{% url 'add_student' %}" method="Post">
+                    {% csrf_token %}
+                    <label for="name">Name</label>
+                    <input type="text" name="name">
+                    <button type="submit" class="rounded bg-dark text-light">add student</button>
+                </form>
+
+            </div>
+
+            <div class="modal-footer"></div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
