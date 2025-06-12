@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}attendance list {% endblock %}
+
+
+{% block content %}
+<h3 class="text-center  mt-3" > Todays  Attendance Date: {{today}}</h3>
+
+<div class="d-flex justify-content-center mt-3">
+    {% if attendance_today %}
+    <table class="w-75 table table-bordered">
+        <thead>
+            <tr>
+            <th>Date</th>
+            <th>Name</th>
+            <th>Entry time</th>
+            <th>Exit time</th>
+            <th>Total Hours</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for i in attendance_today %}
+        <tr>
+            <td>{{i.date}}</td>
+            <td>{{i.student.name}}</td>
+            <td>{{i.entry_time}}</td>
+            <td> {%if i.exit_time is None %} _  {% else %}{{i.exit_time}} {% endif %}</td>
+            <td>{{i.daily_hours}}Hr</td>
+        </tr>
+            {% endfor  %}
+            
+        </tbody>
+    </table>
+    {% else %}
+    <h3 class="text-center mt-4">Attendances are not updated</h3>
+    {% endif %}
+   </div> 
+
+
+
+{% endblock %}

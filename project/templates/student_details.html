@@ -1,13 +1,18 @@
 {% extends "base.html" %}
 {% block title %}student__details {% endblock %}
 {% block  content %}
-
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-success w-75">{{message}}</div>
+{% endfor %}
+{% endif %}
 <div class="d-flex justify-content-center align-item-center h-100">
 <div class="w-75 m-3 border p-4">
 <h2 class="text-center">Student Details</h2>
 <h3  class="">{{student.name}}</h3>
 <h4>{{student.course}}</h4>
-<p>join on <strong>{{student.join_date}}</strong></p>
+<p>Joined on <strong>{{student.join_date}}</strong></p>
+<p><strong>{{month}}</strong> month total working hours: <strong>{{monthly_hour}}</strong> </p>
 {% if attendance %}
 <table class="table table-striped">
     <thead>
@@ -24,6 +29,7 @@
             <td>{{i.date}}</td>
             <td>{{i.entry_time}}</td>
             <td>{{i.exit_time}}</td>
+            <td>{{i.daily_hours}}</td>
         </tr>
         {% endfor %}
         

@@ -24,8 +24,8 @@
             <tr><td>{{i.date}}</td>
             <td>{{i.student.name}}</td>
             <td>{{i.entry_time}}</td>
-            <td>{{i.exit_time}}</td>
-            <td>{{i.dialy_hours}}Hr</td></tr>
+            <td>{% if i.exit_time is None %}_{% else %}{{i.exit_time}}{% endif %}</td>
+            <td>{{i.daily_hours}}Hr</td></tr>
             {% endfor  %}
             
         </tbody>

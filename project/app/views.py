@@ -8,6 +8,7 @@ from .models import *
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
+from datetime import datetime, timedelta
 
 def admin_login(request):
     if request.method=='POST':
@@ -21,9 +22,18 @@ def admin_login(request):
             return redirect('login')
     return render(request, 'login.html')
 
+def attendance_today(request):
+    today=timezone.now().date()
+    attendance_today=Attendance.objects.filter(date=today)
+    print(attendance_today)
+    return render(request, 'attendance.html', locals())
 
+@login_required    
 def dashboard(request):
-    attendances=Attendance.objects.all()
+    today=timezone.now().date()
+    start_of_week=today-timedelta(days=today.weekday())
+    end_of_week=start_of_week+timedelta(days=6)
+    attendances=Attendance.objects.filter(date__range=(start_of_week,end_of_week))
     return render(request, 'dashboard.html', locals())
 
 
@@ -53,10 +63,11 @@ def scan_QR(request):
         if not created:
             attendance.exit_time=now
             attendance.save()
-
-            return HttpResponse("<h1>exit  time updated</h1>")   
+            messages.success(request,'exit  time updated' )
+            return redirect('attendance')
         
-        return HttpResponse("<h1>entry time updated</h1>")  
+        messages.success(request,'entry time updated',student.id)
+        return redirect('attendance')
             
     return render(request, 'form.html')
 
@@ -64,16 +75,16 @@ def scan_QR(request):
 def add_student(request):
     if request.method=='POST':
         name=request.POST.get('name')
-        id=request.POST.get('id')
+        student_id=request.POST.get('id')
         course=request.POST.get('course')
         join_date=request.POST.get('join_date')
-        if not name or not id or not join_date or course:
+        if not name or not student_id or not join_date or not course:
             messages.error(request, 'all fields are required!')
             return redirect('students')
 
-        student = Student.objects.filter(Q(name__iexact=name) | Q(student_id__iexact=id)).exists()
+        student = Student.objects.filter(Q(name__iexact=name) | Q(student_id__iexact=student_id)).exists()
         if not student:
-            student=Student.objects.create(student_id=id.capitalize(), name=name.capitalize(), course=course, join_date=join_date)
+            student=Student.objects.create(student_id=student_id.capitalize(), name=name.capitalize(), course=course, join_date=join_date)
             messages.success(request, f'student {name} added successfully')
             return redirect('students')
         else:
@@ -89,6 +100,12 @@ def students(request) :
 @login_required
 def student_details(request,id):
     student=get_object_or_404(Student,id=id)
+
+    date=datetime.today()
+    month=date.strftime('%B')
+    monthly_hour=student.get_monthly_hours(date.month,date.year)
+    print(monthly_hour)
+
     attendance=Attendance.objects.filter(student=student).order_by('-date')
     print(attendance)
     for i in attendance:
@@ -98,4 +115,4 @@ def student_details(request,id):
 @login_required
 def logout(request):
     django_logout(request)
-    return redirect(login)
+    return redirect('login')
