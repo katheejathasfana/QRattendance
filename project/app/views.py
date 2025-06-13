@@ -39,7 +39,7 @@ def dashboard(request):
 
 @login_required
 def generate_qr(request):
-    qr=qrcode.make('http://192.168.68.81/scan')
+    qr=qrcode.make('https://asfana.pythonanywhere.com/scan')
     buffer=BytesIO()
     qr.save(buffer,format="PNG")
     buffer.seek(0)
