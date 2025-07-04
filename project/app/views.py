@@ -3,12 +3,14 @@ from io import BytesIO
 from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib.auth import authenticate, login, logout as django_logout
 import  qrcode
-from django.http import HttpResponse
+from django.http import HttpResponse,  JsonResponse
 from .models import *
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
 from datetime import datetime, timedelta
+# from django.template.loader import render_to_string
+from weasyprint import HTML
 
 def admin_login(request):
     if request.method=='POST':
@@ -90,29 +92,84 @@ def add_student(request):
         else:
             messages.error(request, 'student with that name already exists')
             return redirect('students')
-    
+        
+@login_required     
+def edit_student(request,id):
+    student=get_object_or_404(Student, id=id)
+    return render(request, 'edit_student.html',locals())
+
+@login_required
+def update_student(request, id):
+    student=get_object_or_404(Student, id=id)
+    if request.method=='POST':
+        student.name=request.POST.get('name')    
+        student.student_id=request.POST.get('student_id')   
+        student.course=request.POST.get('course')   
+        student.join_date=request.POST.get('join_date')   
+        student.save()
+    return redirect('student_details', id=id)   
+
+
 @login_required
 def students(request) :
     students=Student.objects.all()
     courses=Student.course_choices
     return render(request, 'students.html',locals())  
 
+import calendar
 @login_required
 def student_details(request,id):
     student=get_object_or_404(Student,id=id)
-
+    months=list(calendar.month_name)
     date=datetime.today()
     month=date.strftime('%B')
-    monthly_hour=student.get_monthly_hours(date.month,date.year)
+    monthly_hour=student.get_monthly_hours(date.month, date.year)
     print(monthly_hour)
 
-    attendance=Attendance.objects.filter(student=student).order_by('-date')
-    print(attendance)
-    for i in attendance:
-        print(i.entry_time)
+    selected_month=request.GET.get('month')
+    # selected_year=int(request.GET.get('year'))
+    if selected_month and selected_month in months:
+        month_number=months.index(selected_month)
+        attendance=Attendance.objects.filter(student=student, 
+                                         date__month=month_number)
+        monthly_hour=student.get_monthly_hours(month_number,date.year)
+        month=selected_month
+    else:
+        attendance=Attendance.objects.filter(student=student)
+        print(attendance)
+    
     return render(request, 'student_details.html', locals())
+
+
+def search_student(request):
+    q=request.GET.get('q','')
+    students=Student.objects.filter(name__icontains=q).values('id', 'name')[:10]
+    return JsonResponse(list(students), safe=False)
+
 
 @login_required
 def logout(request):
     django_logout(request)
     return redirect('login')
+
+
+from django.template.loader import render_to_string
+def dowload_attendance(request):
+    today=timezone.now().date()
+    
+    attendance_today=Attendance.objects.filter(date=today)
+    string_html=render_to_string('download.html', locals())
+
+    response=HttpResponse(content_type='application/pdf')
+    response['Content-Disposition']=f'attachment; filename=attendance_{today}.pdf'
+    HTML(string=string_html, base_url=request.build_absolute_uri()).write_pdf(response)
+    print(string_html)
+    return response
+
+def download_attendance_by_choose(requset):
+    pass
+
+
+
+
+    

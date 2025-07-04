@@ -1,0 +1,33 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block title %} Edit Student Details {% endblock %}
+{% block  style %}
+{% endblock %}
+{% block content%}
+<div class='container d-flex justify-content-center'>
+    <div class="border border-2 border-black p-3 m-5 rounded w-50 bg-#fff">
+        <h3 class='mt-2'>Edit Student Details</h3>
+        <form action="{% url 'update_student' student.id %}" method="POST">
+         {% csrf_token %}
+        <div class=''>
+            <label for="name" class='form-label mt-3 '>Name</label>
+            <input type="text" class='form-control' name="name" id="" value="{{student.name}}">
+        </div>
+       <div class='w-full '>
+            <label for="name" class='form-label mt-3 text-2'>Student ID</label>
+            <input type="text" class='form-control ' name="id" id="" value="{{student.student_id}}">
+        </div>
+        <div class='w-full '>
+            <label for="name" class='form-label mt-3 focus-dark'>Course</label>
+            <input type="text" class='form-control' name="course" id="" value="{{student.course}}">
+        </div>
+       <div class='w-full '>
+            <label for="name" class='form-label mt-3'>Join Date</label>
+            <input type="date" class='form-control' name="join_date" id="" value="{{student.join_date| date:'Y-m-d'}}">
+        </div>
+        <button class='w-100 p-2 bg-dark rounded border-0  mt-3 text-white'>update</button>
+        </form>
+    </div>
+    
+</div>
+{% endblock %}

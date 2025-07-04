@@ -1,44 +1,73 @@
 {% extends "base.html" %}
 {% block title %}student__details {% endblock %}
-{% block  content %}
+{% block content %}
 {% if messages %}
 {% for message in messages %}
 <div class="alert alert-success w-75">{{message}}</div>
 {% endfor %}
 {% endif %}
 <div class="d-flex justify-content-center align-item-center h-100">
-<div class="w-75 m-3 border p-4">
-<h2 class="text-center">Student Details</h2>
-<h3  class="">{{student.name}}</h3>
-<h4>{{student.course}}</h4>
-<p>Joined on <strong>{{student.join_date}}</strong></p>
-<p><strong>{{month}}</strong> month total working hours: <strong>{{monthly_hour}}</strong> </p>
-{% if attendance %}
-<table class="table table-striped">
-    <thead>
-    <tr>
-        <th>Date</th>
-        <th>Entry time</th>
-        <th>Exit time</th>
-        <th>Total Hours</th>
-    </tr>
-    </thead>
-    <tbody>
-        {% for i in attendance %}
-        <tr>
+  <div class="w-75 m-3 border p-4 position-relative">
+
+    <div>
+      <h3 class="text-center">Student Details</h3>
+      <a href="{% url 'edit_student' student.id %}" class='position-absolute top-0 end-0 m-2 text-dark fs-4 '><i
+          class="bi bi-pencil-fill "></i>
+      </a>
+      <h3 class="">{{student.name}}</h3>
+      <h4>{{student.course}}</h4>
+      <p>Joined on <strong>{{student.join_date}}</strong></p>
+      <div class="d-flex flex-column flex-md-row align-items-center gap-3">
+        <p class="w-100 w-md-50 mb-0">
+          <strong>{{ month }}</strong> month total working hours:
+          <strong>{{ monthly_hour }}</strong>
+        </p>
+
+        <div class="w-100 w-md-50">
+          <form method="get">
+            <label class="form-label" for="month-select">Choose a month</label>
+            <select id="month-select" name="month" class="form-select" onchange="this.form.submit()">
+              {% for name in months %}
+              <option value="{{name}}" {% if name == selected_month %} selected {% endif %}>{{ name }}</option>
+              {% endfor %}
+            </select>
+          </form>
+        </div>
+      </div>
+
+
+      {% if attendance %}
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Entry time</th>
+            <th>Exit time</th>
+            <th>Total Hours</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in attendance %}
+          <tr>
             <td>{{i.date}}</td>
             <td>{{i.entry_time}}</td>
-            <td> {%if i.exit_time is None %} _  {% else %}{{i.exit_time}} {% endif %}</td>
+            <td> {%if i.exit_time is None %} _ {% else %}{{i.exit_time}} {% endif %}</td>
             <td>{{i.daily_hours}}</td>
-        </tr>
-        {% endfor %}
-        
-    </tbody>
-</table>
-{% else %}
-<h3 class="text-center mt-5">Attendance are not updated yet</h3>
-</div>
+          </tr>
 
-</div>
-{% endif %}
-{% endblock %}
+
+          {% endfor %}
+
+        </tbody>
+      </table>
+      {% else %}
+      <h3 class="text-center mt-5">Attendance are not updated yet</h3>
+      {% endif %}
+    </div>
+    <div class="text-center">
+    <button class="border border-0 p-2 px-4 text-light bg-dark rounded">download</button>
+    </div>
+  </div>
+
+
+  {% endblock %}

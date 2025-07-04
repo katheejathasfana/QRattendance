@@ -2,7 +2,7 @@
 {% load static %}
 {% block title %} attendance form {% endblock %}
 {% block content %}
-<div class="d-flex justify-content-center rounded ">
+<div class="d-flex justify-content-center  ">
     <div class="border p-3 m-5 bg-gray col-lg-6 col-12 rounded">
         <form action="{% url 'scan' %}" method="Post">
             {% csrf_token %}
